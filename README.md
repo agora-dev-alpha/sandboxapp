@@ -557,6 +557,10 @@ to
 + 104   ¦ ¦ </div
 ```
 
+**???**: How do I fix this picture.
+My first place to look would be where the V1 of the app had the
+spinning logo.
+
 
 
 

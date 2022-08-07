@@ -4,7 +4,9 @@ import { API, Storage } from 'aws-amplify';
 import { withAuthenticator, Button } from '@aws-amplify/ui-react';
 import { listNotes } from './graphql/queries';
 import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } from './graphql/mutations';
+
 const initialFormState = { name: '', description: '' }
+
 
 function App({ signOut }) {
   const [notes, setNotes] = useState([]);
@@ -23,6 +25,7 @@ function App({ signOut }) {
   //  setNotes(apiData.data.listNotes.items);
   //}
 
+  // How to load all the notes.
   async function fetchNotes() {
       const apiData = await API.graphql({ query: listNotes });
       const notesFromAPI = apiData.data.listNotes.items;
@@ -36,6 +39,7 @@ function App({ signOut }) {
       setNotes(apiData.data.listNotes.items);
   }
 
+  //  How to create a note as long as a name and description exist
   async function createNote() {
       if (!formData.name || !formData.description) return;
       await API.graphql({ query: createNoteMutation, variables: { input: formData } });
@@ -47,12 +51,14 @@ function App({ signOut }) {
       setFormData(initialFormState);
   }
 
+  // Delete things from the note Queue.
   async function deleteNote({ id }) {
     const newNotesArray = notes.filter(note => note.id !== id);
     setNotes(newNotesArray);
     await API.graphql({ query: deleteNoteMutation, variables: { input: { id } }});
   }
 
+  // A general function for doing things to the input.
   async function onChange(e) {
       if (!e.target.files[0]) return
       const file = e.target.files[0];
@@ -72,7 +78,6 @@ function App({ signOut }) {
         value={formData.name}
       />
         
-        
       <input
         onChange={e => setFormData({ ...formData, 'description': e.target.value})}
         placeholder="Note description"
@@ -80,13 +85,11 @@ function App({ signOut }) {
       />
         
       <input
-      type="file"
-      onChange={onChange}
+        type="file"
+        onChange={onChange}
       />
         
-        
       <button onClick={createNote}>Create Note</button>
-        
         
       <div style={{marginBottom: 30}}>
         {
@@ -94,18 +97,14 @@ function App({ signOut }) {
            <div key={note.id || note.name}>
              <h2>{note.name}</h2>
              <p>{note.description}</p>
+             <div><img src={note.image} style={{width: 400}} alt="sup bro" /></div>
              <button onClick={() => deleteNote(note)}>Delete note</button>
-             {
-             note.image && <img src={note.image} style={{width: 400}} alt="sup bro" />
-             }
            </div>
          ))
         }
       </div>
         
-        
       <Button onClick={signOut}>Sign Out</Button>
-        
         
     </div>
   );
